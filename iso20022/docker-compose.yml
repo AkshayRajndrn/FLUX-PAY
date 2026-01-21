@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  nexus-db:
+    image: postgres:18
+    container_name: nexus-iso-db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=akshay@its
+      - POSTGRES_DB=SWIFTAPI
+    ports:
+      - "5432:5432"
+    volumes:
+      # FIX: Mount to the parent directory as per Postgres 18 requirements
+      - nexus_db_data:/var/lib/postgresql
+    healthcheck:
+      # Use pg_isready to ensure the app waits long enough
+      test: ["CMD-SHELL", "pg_isready -U admin -d SWIFTAPI"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nexus-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus-iso-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      nexus-db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://nexus-db:5432/SWIFTAPI
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=akshay@its
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+volumes:
+  nexus_db_data:
