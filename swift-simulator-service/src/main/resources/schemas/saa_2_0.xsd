@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:Saa="urn:swift:saa:xsd:saa.2.0"
+  targetNamespace="urn:swift:saa:xsd:saa.2.0"
+  elementFormDefault="qualified">
+
+  <xs:element name="DataPDU">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Revision" type="xs:string" minOccurs="0" fixed="2.0.10"/>
+        <xs:element name="Header" type="Saa:Header"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="Header">
+    <xs:sequence>
+      <xs:element name="TransmissionReport" type="Saa:TransmissionReport"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TransmissionReport">
+    <xs:sequence>
+      <xs:element name="SenderReference" type="xs:string"/>
+      <xs:element name="NetworkDeliveryStatus" type="Saa:DeliveryStatus"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="DeliveryStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NetworkAcked"/>
+      <xs:enumeration value="NetworkNacked"/>
+      <xs:enumeration value="DeliveryAborted"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

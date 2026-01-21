@@ -1,5 +1,6 @@
-package com.swift.relay.entity;
+package com.swift.api.entity;
 
+import com.swift.api.util.AesEncryptionConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -28,6 +29,7 @@ public class OutboxPayment {
   @Column(name = "payment_id", nullable = false)
   private String paymentId;
 
+  @Convert(converter = AesEncryptionConverter.class)
   @Column(columnDefinition = "TEXT", nullable = false)
   private String payload;
 

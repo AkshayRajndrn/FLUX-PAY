@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Slf4j
@@ -24,13 +25,14 @@ public class OutboxListener {
   @Value("${saa.payment.mq}")
   String saaMQ;
 
-
+  @Transactional
   @Scheduled(fixedDelayString = "${relay.polling.interval:2000}")
-  private void publish() {
+  public void publish() {
 
     List<OutboxPayment> pendingMessages = paymentOutboxRepository.findTop10ByStatusOrderByCreatedAtAsc(
         "PENDING", PageRequest.of(0, 10)
     );
+
 
     for (OutboxPayment message : pendingMessages) {
       try {
